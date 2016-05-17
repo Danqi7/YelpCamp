@@ -1,18 +1,13 @@
 var express = require("express");
-var app = express();
-var bodyParser = require("body-parser");
-var Campground = require("./models/campground")
+    app = express();
+    mongoose = require("mongoose");
+    bodyParser = require("body-parser");
+    Campground = require("./models/campground")
+    seedDB = require("./seeds");
 
 mongoose.connect("mongodb://localhost/yelp_camp");
-
-//set up a schema
-var campgroundSchema = new mongoose.Schema({
-    name: String,
-    image: String
-});
-
-var Campground = mongoose.model("Campground", campgroundSchema);
-
+app.set("port", (process.env.PORT || 5000));
+//seedDB();
 // Campground.create(
 //     {
 //         name:"NU camp", 
@@ -64,11 +59,22 @@ app.post("/campgrounds", function(req, res){
     
 });
 
-app.get("/campgrounds/new", function(req, res){
-   
+app.get("/campgrounds/:id", function(req, res){
+	Campground.findById(req.params.id, function(err, foundCamp){
+		if (err){
+			console.log("err");
+			res.redirect("/campgrounds");
+		}else {
+			res.render("show", {camp: foundCamp});	
+	
+		}
+	});
+});
+
+app.get("/campgrounds/new", function(req, res){  
    res.render("new"); 
 });
 
-app.listen(process.env.PORT, process.env.IP, function(){
-    console.log("YelpCamp has started!");
+app.listen(app.get("port"), function(){
+    console.log("YelpCamp has started at port: ", app.get("port"));
 });
