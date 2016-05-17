@@ -1,5 +1,6 @@
 var mongoose = require("mongoose");
 var Campground = require("./models/campground");
+var Comment = require("./models/comment");
 
 var data = [
 	{
@@ -30,11 +31,20 @@ function seedBD(){
 		}
 	});
 	data.forEach(function(seed){
-		Campground.create(seed, function(err,data){
+		Campground.create(seed, function(err,campground){
 			if (err){
 				console.log(err);
 			} else {
 				console.log("added a campground");
+				//create comments
+				Comment.create({
+						text: "This campground is awesome!",
+						author: "Homer"
+					}, function(err, comment){
+						campground.comments.push(comment);
+						campground.save();
+						console.log("created campground");	
+				});
 			}
 		});	
 	});
