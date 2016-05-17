@@ -3,18 +3,31 @@ var app = express();
 var bodyParser = require("body-parser");
 var Campground = require("./models/campground")
 
+mongoose.connect("mongodb://localhost/yelp_camp");
 
+//set up a schema
+var campgroundSchema = new mongoose.Schema({
+    name: String,
+    image: String
+});
+
+var Campground = mongoose.model("Campground", campgroundSchema);
+
+// Campground.create(
+//     {
+//         name:"NU camp", 
+//         image:"http://www.totalescape.com/outside/wp-content/uploads/2013/02/DSCN0119.jpg"
+//     },function(err, campground){
+//         if (err){
+//             console.log(err);
+//         }else {
+//             console.log("A NEW CAMPGROUND IS CREATED!");
+//             console.log(campground);
+//         }
+//     });
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended:true}));
-
-   var campgrounds = [
-       {name:"NU camp", image:"http://www.totalescape.com/outside/wp-content/uploads/2013/02/DSCN0119.jpg"},
-       {name:"Stanford camp", image:"http://www.active.com/Assets/Outdoors/Featured+Content/California-Camping-460.jpg"},
-       {name:"JHU camp", image:"http://www.topeducationdegrees.org/wp-content/uploads/2014/05/49.-River-Way-Ranch-Camp-%E2%80%93-Sanger-California.jpg"}
-       ]
-    
-
 
 
 app.get("/", function(req, res){
@@ -22,7 +35,14 @@ app.get("/", function(req, res){
 });
 
 app.get("/campgrounds", function(req, res){
-    res.render("campgrounds", {campgrounds:campgrounds});
+    Campground.find({}, function(err, campgrounds){
+        if (err){
+            console.log(err);
+        }else {
+            console.log(campgrounds);
+            res.render("campgrounds", {campgrounds:campgrounds});
+        }
+    });
 });
 
 app.post("/campgrounds", function(req, res){
@@ -30,11 +50,17 @@ app.post("/campgrounds", function(req, res){
    //redirct to the campgrounds
    var name = req.body.name;
    var image = req.body.image;
-   
+   //create new campground and save it to DB
    var newCampground = {name:name, image:image};
-   campgrounds.push(newCampground);
-   res.redirect("/campgrounds");
-   console.log("POST ACTION!");
+   Campground.create(newCampground, function(err, campground) {
+       if (err){
+           console.log(err);
+       }else {
+           console.log("POST ACTION!");
+           res.redirect("/campgrounds");
+       }
+   });
+   
     
 });
 
