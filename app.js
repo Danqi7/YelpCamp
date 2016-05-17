@@ -7,7 +7,7 @@ var express = require("express");
 
 mongoose.connect("mongodb://localhost/yelp_camp");
 app.set("port", (process.env.PORT || 5000));
-//seedDB();
+seedDB();
 // Campground.create(
 //     {
 //         name:"NU camp", 
@@ -59,6 +59,10 @@ app.post("/campgrounds", function(req, res){
     
 });
 
+app.get("/campgrounds/new", function(req, res){
+   res.render("new");
+});
+
 app.get("/campgrounds/:id", function(req, res){
 	Campground.findById(req.params.id, function(err, foundCamp){
 		if (err){
@@ -71,9 +75,6 @@ app.get("/campgrounds/:id", function(req, res){
 	});
 });
 
-app.get("/campgrounds/new", function(req, res){  
-   res.render("new"); 
-});
 
 app.listen(app.get("port"), function(){
     console.log("YelpCamp has started at port: ", app.get("port"));
