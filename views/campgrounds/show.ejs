@@ -2,16 +2,20 @@
 
 <div class="container">
 
-<span>
-	<h3><%= camp.name %></h3>
-</span>
-<span>
-	<img src="<%=camp.image%>" height=240px >
-</span>
-<span>
-	<p><%= camp.description %></p>
-</span>
-
+	<span>
+		<h3><%= camp.name %></h3>
+	</span>
+	<span>
+		<img src="<%=camp.image%>" height=240px >
+	</span>
+	<span>
+		<p><%= camp.description %></p>
+	</span>
+	<span>
+		<% camp.comments.forEach(function(comment){ %>
+			<h4><%= comment.text %> --<strong><%= comment.author %></strong></h4>
+		<% }); %>
+	</span>
 
 </div>
 <% include ../partials/footer %>
